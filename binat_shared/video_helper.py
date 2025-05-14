@@ -6,7 +6,7 @@ import os
 import re
 import logging
 
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 
 class VideoHelper:
 
@@ -126,3 +126,26 @@ class VideoHelper:
             return frame_number, formatted_time
         except Exception as e:
             raise ValueError(f"Error converting position '{position_ms}' to frame: {e}")
+
+    @staticmethod
+    def get_video_orientation(ffprobe_data):
+        video_stream = next((stream for stream in ffprobe_data['streams'] if stream['codec_type'] == 'video'), None)
+        if not video_stream:
+            return "Unknown", 0
+
+        # Check for rotation
+        rotation = None
+        for side_data in video_stream.get("side_data_list", []):
+            if side_data.get("side_data_type") == "Display Matrix":
+                rotation = side_data.get("rotation")
+
+        if rotation is not None:
+            if rotation == 0:
+                return "Horizontal", 0
+            elif rotation in [-90, 90]:
+                return "Vertical", rotation
+
+        # Fallback to width/height
+        width = video_stream.get("width", 0)
+        height = video_stream.get("height", 0)
+        return ("Horizontal", 0) if width > height else ("Vertical", 0)
