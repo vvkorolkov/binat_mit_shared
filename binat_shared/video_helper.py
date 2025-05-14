@@ -6,20 +6,22 @@ import os
 import re
 import logging
 
-__version__ = "0.0.2"
-__master_comment__ = "DO NOT EDIT MANUALLY — synced from BinatMediaProcessor project"
+__version__ = "0.0.3"
 
 class VideoHelper:
 
     @staticmethod
     def get_version():
-        return __version__, __master_comment__
+        return __version__
 
     @staticmethod
     def get_ffprobe_path() -> str:
+        env_override = os.environ.get("FFPROBE_PATH")
+        if env_override:
+            return env_override
         ffprobe_path = shutil.which("ffprobe")
         if not ffprobe_path:
-            raise RuntimeError("ffprobe not found in system PATH. Please install FFmpeg.")
+            raise RuntimeError("ffprobe not found in system PATH and FFPROBE_PATH not set.")
         return ffprobe_path
 
     @staticmethod
