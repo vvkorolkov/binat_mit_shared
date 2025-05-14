@@ -6,7 +6,7 @@ import os
 import re
 import logging
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __master_comment__ = "DO NOT EDIT MANUALLY — synced from BinatMediaProcessor project"
 
 class VideoHelper:
