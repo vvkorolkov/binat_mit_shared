@@ -9,7 +9,7 @@ import logging
 __version__ = "0.0.1"
 __master_comment__ = "DO NOT EDIT MANUALLY — synced from BinatMediaProcessor project"
 
-class VideoHelperMediaProcessor:
+class VideoHelper:
 
     @staticmethod
     def get_version():
@@ -24,7 +24,7 @@ class VideoHelperMediaProcessor:
 
     @staticmethod
     def get_ffprobe_output(file_path):
-        ffprobe_path = VideoHelperMediaProcessor.get_ffprobe_path()
+        ffprobe_path = VideoHelper.get_ffprobe_path()
         if not os.path.exists(ffprobe_path):
             logging.error(f"Error: ffprobe not found at {ffprobe_path}")
             return None
@@ -83,12 +83,12 @@ class VideoHelperMediaProcessor:
         for k, v in data.items():
             new_key = f"{parent_key}{sep}{k}" if parent_key else k
             if isinstance(v, dict):
-                items.extend(VideoHelperMediaProcessor.flatten_dict(v, new_key, sep=sep).items())
+                items.extend(VideoHelper.flatten_dict(v, new_key, sep=sep).items())
             elif isinstance(v, list):
                 for i, item in enumerate(v):
                     list_key = f"{new_key}[{i}]"
                     if isinstance(item, dict):
-                        items.extend(VideoHelperMediaProcessor.flatten_dict(item, list_key, sep=sep).items())
+                        items.extend(VideoHelper.flatten_dict(item, list_key, sep=sep).items())
                     else:
                         items.append((list_key, item))
             else:
