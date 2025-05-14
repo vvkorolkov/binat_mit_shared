@@ -1,0 +1,16 @@
+[project]
+name = "binat_mit_shared"
+version = "0.0.1"
+description = "Reusable tools by BINAT.US"
+authors = [
+  {name = "Vasilii Korolkov", email = "vk@binat.us"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/vvkorolkov/binat_mit_shared"
+Repository = "https://github.com/vvkorolkov/binat_mit_shared"
+Issues = "https://github.com/vvkorolkov/binat_mit_shared/issues"
