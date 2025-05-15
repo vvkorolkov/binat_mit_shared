@@ -1,6 +1,6 @@
 [project]
 name = "binat_mit_shared"
-version = "0.0.4"
+version = "0.0.5"
 description = "Reusable tools by BINAT.US"
 authors = [
   {name = "Vasilii Korolkov", email = "vk@binat.us"}

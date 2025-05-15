@@ -6,7 +6,7 @@ import os
 import re
 import logging
 
-__version__ = "0.0.4"
+__version__ = "0.0.5"
 
 class VideoHelper:
 
@@ -15,14 +15,22 @@ class VideoHelper:
         return __version__
 
     @staticmethod
-    def get_ffprobe_path() -> str:
-        env_override = os.environ.get("FFPROBE_PATH")
+    def _resolve_binary_path(env_var: str, binary_name: str) -> str:
+        env_override = os.environ.get(env_var)
         if env_override:
             return env_override
-        ffprobe_path = shutil.which("ffprobe")
-        if not ffprobe_path:
-            raise RuntimeError("ffprobe not found in system PATH and FFPROBE_PATH not set.")
-        return ffprobe_path
+        path = shutil.which(binary_name)
+        if not path:
+            raise RuntimeError(f"{binary_name} not found in system PATH and {env_var} not set.")
+        return path
+
+    @staticmethod
+    def get_ffprobe_path() -> str:
+        return VideoHelper._resolve_binary_path("FFPROBE_PATH", "ffprobe")
+
+    @staticmethod
+    def get_ffmpeg_path() -> str:
+        return VideoHelper._resolve_binary_path("FFMPEG_PATH", "ffmpeg")
 
     @staticmethod
     def get_ffprobe_output(file_path):
