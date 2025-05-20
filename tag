@@ -1,0 +1,1 @@
+git tag -a v0.0.6 -m "Release v0.0.6"

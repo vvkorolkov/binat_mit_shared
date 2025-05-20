@@ -6,7 +6,7 @@ import os
 import re
 import logging
 
-__version__ = "0.0.5"
+__version__ = "0.0.6"
 
 class VideoHelper:
 
@@ -157,3 +157,19 @@ class VideoHelper:
         width = video_stream.get("width", 0)
         height = video_stream.get("height", 0)
         return ("Horizontal", 0) if width > height else ("Vertical", 0)
+
+    @staticmethod
+    def is_video_file_valid(path: str) -> bool:
+        import subprocess
+        try:
+            ffmpeg_path = VideoHelper.get_ffmpeg_path()
+            result = subprocess.run(
+                [ffmpeg_path, "-v", "error", "-i", path, "-f", "null", "-"],
+                stderr=subprocess.PIPE,
+                stdout=subprocess.DEVNULL,
+                timeout=15
+            )
+            return result.returncode == 0 and not result.stderr
+        except Exception as e:
+            print(f"[ERROR] Validation failed: {e}")
+            return False
