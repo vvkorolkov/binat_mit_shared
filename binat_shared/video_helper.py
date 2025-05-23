@@ -6,7 +6,7 @@ import os
 import re
 import logging
 
-__version__ = "0.0.7"
+__version__ = "0.0.8"
 
 class VideoHelper:
 
@@ -162,8 +162,9 @@ class VideoHelper:
     def is_video_file_valid(path: str) -> tuple[bool, str]:
         import subprocess
         try:
+            ffmpeg_path = VideoHelper.get_ffmpeg_path()
             result = subprocess.run(
-                ["ffmpeg", "-v", "error", "-i", path, "-f", "null", "-"],
+                [ffmpeg_path, "-v", "error", "-i", path, "-f", "null", "-"],
                 stderr=subprocess.PIPE,
                 stdout=subprocess.DEVNULL,
                 timeout=15
