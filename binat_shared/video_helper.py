@@ -6,7 +6,7 @@ import os
 import re
 import logging
 
-__version__ = "0.0.9"
+__version__ = "0.0.10"
 
 class VideoHelper:
 
@@ -181,3 +181,19 @@ class VideoHelper:
             return (result.returncode == 0 and not stderr_output), stderr_output
         except Exception as e:
             return False, str(e)
+
+    @staticmethod
+    def get_container_format(path: str) -> str:
+        import os
+        ext = os.path.splitext(path)[1].lower()
+        return ext
+
+    @staticmethod
+    def get_pixel_format(ffprobe_data):
+        pix_fmt = ffprobe_data['streams'][0].get("pix_fmt", None)
+        return pix_fmt
+
+    @staticmethod
+    def get_bit_depth(ffprobe_data):
+        bit_depth = ffprobe_data['streams'][0].get("bits_per_raw_sample", None)
+        return bit_depth
