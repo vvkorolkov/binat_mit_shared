@@ -6,7 +6,7 @@ import os
 import re
 import logging
 
-__version__ = "0.0.8"
+__version__ = "0.0.9"
 
 class VideoHelper:
 
@@ -82,10 +82,18 @@ class VideoHelper:
             logging.error(f"Fallback FPS failed: {e}")
             return 0.0
 
+    # @staticmethod
+    # def get_duration_frames(ffprobe_data):
+    #     video_stream = next(stream for stream in ffprobe_data['streams'] if stream['codec_type'] == 'video')
+    #     return int(video_stream['nb_frames'])
     @staticmethod
     def get_duration_frames(ffprobe_data):
-        video_stream = next(stream for stream in ffprobe_data['streams'] if stream['codec_type'] == 'video')
-        return int(video_stream['nb_frames'])
+        try:
+            video_stream = next(stream for stream in ffprobe_data['streams'] if stream.get('codec_type') == 'video')
+            nb_frames = video_stream.get('nb_frames')
+            return int(nb_frames) if nb_frames is not None else None
+        except (StopIteration, ValueError, TypeError):
+            return None
 
     @staticmethod
     def flatten_dict(data, parent_key='', sep='.'):
