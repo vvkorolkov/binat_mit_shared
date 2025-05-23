@@ -6,7 +6,7 @@ import os
 import re
 import logging
 
-__version__ = "0.0.10"
+__version__ = "0.0.11"
 
 class VideoHelper:
 
@@ -168,17 +168,20 @@ class VideoHelper:
 
     @staticmethod
     def is_video_file_valid(path: str) -> tuple[bool, str]:
-        import subprocess
         try:
-            ffmpeg_path = VideoHelper.get_ffmpeg_path()
+            ffprobe_path = VideoHelper.get_ffprobe_path()
             result = subprocess.run(
-                [ffmpeg_path, "-v", "error", "-i", path, "-f", "null", "-"],
+                [ffprobe_path, "-v", "error", "-show_entries", "format=duration", "-of",
+                 "default=noprint_wrappers=1:nokey=1", path],
+                stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                stdout=subprocess.DEVNULL,
+                text=True,
                 timeout=15
             )
-            stderr_output = result.stderr.decode("utf-8").strip()
-            return (result.returncode == 0 and not stderr_output), stderr_output
+            output = result.stdout.strip()
+            error_output = result.stderr.strip()
+            is_valid = result.returncode == 0 and output and float(output) > 0
+            return is_valid, error_output or output
         except Exception as e:
             return False, str(e)
 
