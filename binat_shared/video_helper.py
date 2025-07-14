@@ -6,7 +6,7 @@ import os
 import re
 import logging
 
-__version__ = "0.0.11"
+__version__ = "0.0.12"
 
 class VideoHelper:
 
@@ -82,10 +82,6 @@ class VideoHelper:
             logging.error(f"Fallback FPS failed: {e}")
             return 0.0
 
-    # @staticmethod
-    # def get_duration_frames(ffprobe_data):
-    #     video_stream = next(stream for stream in ffprobe_data['streams'] if stream['codec_type'] == 'video')
-    #     return int(video_stream['nb_frames'])
     @staticmethod
     def get_duration_frames(ffprobe_data):
         try:
@@ -200,3 +196,21 @@ class VideoHelper:
     def get_bit_depth(ffprobe_data):
         bit_depth = ffprobe_data['streams'][0].get("bits_per_raw_sample", None)
         return bit_depth
+
+    @staticmethod
+    def get_width(ffprobe_data):
+        for stream in ffprobe_data.get('streams', []):
+            if stream.get('codec_type') == 'video':
+                width = stream.get('width')
+                if width is not None:
+                    return int(width)
+        raise ValueError("Video width could not be determined from ffprobe data.")
+
+    @staticmethod
+    def get_height(ffprobe_data):
+        for stream in ffprobe_data.get('streams', []):
+            if stream.get('codec_type') == 'video':
+                height = stream.get('height')
+                if height is not None:
+                    return int(height)
+        raise ValueError("Video height could not be determined from ffprobe data.")
