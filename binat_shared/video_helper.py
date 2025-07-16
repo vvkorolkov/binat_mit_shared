@@ -3,10 +3,9 @@ import shutil
 import subprocess
 import json
 import os
-import re
 import logging
 
-__version__ = "0.0.12"
+__version__ = "0.0.13"
 
 class VideoHelper:
 
@@ -113,16 +112,21 @@ class VideoHelper:
     def convert_timestamp_to_frame(timestamp: str, fps: float) -> tuple[int, str]:
         if not isinstance(timestamp, str):
             raise ValueError(f"Expected string for timestamp, got {type(timestamp)}")
-        if not re.match(r"^\d{2}:\d{2}:\d{2}(\.\d+)?$", timestamp):
-            raise ValueError(f"Invalid timestamp format: {timestamp}")
+        ts = timestamp.strip().replace(",", ".")
         try:
-            h, m, s = timestamp.split(":")
-            seconds = int(h) * 3600 + int(m) * 60 + float(s)
-            frame_number = max(int(round(seconds * fps)), 0)
-            formatted_time = f"{int(h):02}:{int(m):02}:{float(s):06.3f}"
+            parts = ts.split(":")
+            if len(parts) > 3:
+                raise ValueError("Too many parts in timestamp")
+            parts = [float(p) for p in parts]
+            while len(parts) < 3:
+                parts.insert(0, 0.0)
+            h, m, s = parts[-3], parts[-2], parts[-1]
+            total_seconds = h * 3600 + m * 60 + s
+            frame_number = max(int(round(total_seconds * fps)), 0)
+            formatted_time = f"{int(h):02}:{int(m):02}:{s:06.3f}"
             return frame_number, formatted_time
         except Exception as e:
-            raise ValueError(f"Error parsing timestamp '{timestamp}': {e}")
+            raise ValueError(f"Invalid timestamp '{timestamp}': {e}")
 
     @staticmethod
     def convert_position_to_frame(position_ms: float, fps: float) -> tuple[int, str]:
